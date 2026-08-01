@@ -1,0 +1,61 @@
+<template>
+    <lightning-card title="Properties" icon-name="standard:real_estate">
+        <div class="slds-p-around_medium">
+
+            <!-- Filters -->
+            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                        type="number"
+                        label="Max Price"
+                        onchange={handlePriceChange}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning-combobox
+                        label="Availability Status"
+                        options={availabilityOptions}
+                        onchange={handleAvailabilityChange}>
+                    </lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning-combobox
+                        label="Furnishing Status"
+                        options={furnishingOptions}
+                        onchange={handleFurnishingChange}>
+                    </lightning-combobox>
+                </div>
+            </div>
+
+            <!-- Error -->
+            <template if:true={error}>
+                <p class="slds-text-color_error">Error loading properties.</p>
+            </template>
+
+            <!-- List -->
+            <template for:each={properties} for:item="prop">
+                <div key={prop.Id} class="slds-box slds-m-bottom_small">
+                    <p><strong>{prop.Name}</strong></p>
+                    <p>{prop.Address__c}, {prop.City__c}, {prop.State__c}</p>
+                    <p>Rent: {prop.Rent__c} | Status: {prop.Status__c} | Furnishing: {prop.Furnishing_Status__c}</p>
+                </div>
+            </template>
+
+            <!-- Pagination -->
+            <div class="slds-grid slds-grid_align-spread slds-m-top_medium">
+                <lightning-button
+                    label="Previous"
+                    onclick={handlePrev}
+                    disabled={disablePrev}>
+                </lightning-button>
+                <span>Page {pageNumber} of {totalPages}</span>
+                <lightning-button
+                    label="Next"
+                    onclick={handleNext}
+                    disabled={disableNext}>
+                </lightning-button>
+            </div>
+
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,51 @@
+<template>
+    <lightning-card title="Create Property" icon-name="standard:real_estate">
+        <div class="slds-p-around_medium">
+
+            <!-- Step 1: Property details -->
+            <template if:false={propertyId}>
+                <lightning-input label="Address" data-field="address" onchange={handleInputChange} required></lightning-input>
+                <lightning-input label="City" data-field="city" onchange={handleInputChange} required></lightning-input>
+                <lightning-input label="State" data-field="state" onchange={handleInputChange} required></lightning-input>
+                <lightning-input label="Postal Code" data-field="postalCode" onchange={handleInputChange} required></lightning-input>
+                <lightning-input label="Country" data-field="country" onchange={handleInputChange} required></lightning-input>
+                <lightning-combobox label="Type" data-field="type" options={typeOptions} onchange={handleInputChange} required></lightning-combobox>
+                <lightning-combobox label="Furnishing Status" data-field="furnishingStatus" options={furnishingOptions} onchange={handleInputChange}></lightning-combobox>
+                <lightning-combobox label="Status" data-field="status" options={statusOptions} onchange={handleInputChange} required></lightning-combobox>
+                <lightning-input type="number" label="Rent" data-field="rent" onchange={handleInputChange} required></lightning-input>
+                <lightning-textarea label="Description" data-field="description" onchange={handleInputChange} required></lightning-textarea>
+
+                <div class="slds-m-top_medium">
+                    <lightning-button
+                        variant="brand"
+                        label="Continue to Upload Image"
+                        onclick={handleCreateAndPrepareUpload}>
+                    </lightning-button>
+                </div>
+            </template>
+
+            <!-- Step 2: Image upload (required) -->
+            <template if:true={propertyId}>
+                <p class="slds-text-color_weak slds-m-bottom_small">
+                    Attach at least one image to finish creating this property. It will not be saved without one.
+                </p>
+                <lightning-file-upload
+                    label="Property Images"
+                    name="propertyImages"
+                    accept={acceptedFormats}
+                    record-id={propertyId}
+                    multiple
+                    onuploadfinished={handleUploadFinished}>
+                </lightning-file-upload>
+
+                <div class="slds-m-top_medium">
+                    <lightning-button
+                        label="Cancel"
+                        onclick={handleCancelWithoutImage}>
+                    </lightning-button>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
