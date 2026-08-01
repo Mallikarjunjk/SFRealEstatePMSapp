@@ -1,5 +1,5 @@
 public with sharing class PropertyController {
-
+//created as part of the property listing feature, this controller handles the retrieval of property records with pagination and filtering options.
     @AuraEnabled(cacheable=true)
     public static PagedResult getProperties(
         Integer pageNumber, Integer pageSize,
