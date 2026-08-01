@@ -38,4 +38,29 @@ public with sharing class PropertyController {
         @AuraEnabled public List<Property__c> records;
         @AuraEnabled public Integer totalCount;
     }
+    @AuraEnabled
+    public static Id createProperty(
+        String addressStr, String cityStr, String stateStr, String postalCodeStr, String countryStr,
+        String typeStr, String furnishingStr, String statusStr, Decimal rentNum, String descriptionStr
+    ) {
+        Property__c p = new Property__c(
+            Address__c = addressStr,
+            City__c = cityStr,
+            State__c = stateStr,
+            Postal_Code__c = postalCodeStr,
+            Country__c = countryStr,
+            Type__c = typeStr,
+            Furnishing_Status__c = furnishingStr,
+            Status__c = statusStr,
+            Rent__c = rentNum,
+            Description__c = descriptionStr
+        );
+        insert p;
+        return p.Id;
+    }
+
+    @AuraEnabled
+    public static void deleteProperty(Id propertyId) {
+        delete new Property__c(Id = propertyId);
+    }
 }
