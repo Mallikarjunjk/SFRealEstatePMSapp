@@ -2,8 +2,8 @@
     <lightning-card title="Create Property" icon-name="standard:real_estate">
         <div class="slds-p-around_medium">
 
-            <!-- Step 1: Property details -->
             <template if:false={propertyId}>
+                <lightning-input label="Property Name" data-field="propertyName" onchange={handleInputChange} required></lightning-input>
                 <lightning-input label="Address" data-field="address" onchange={handleInputChange} required></lightning-input>
                 <lightning-input label="City" data-field="city" onchange={handleInputChange} required></lightning-input>
                 <lightning-input label="State" data-field="state" onchange={handleInputChange} required></lightning-input>
@@ -24,7 +24,6 @@
                 </div>
             </template>
 
-            <!-- Step 2: Image upload (required) -->
             <template if:true={propertyId}>
                 <p class="slds-text-color_weak slds-m-bottom_small">
                     Attach at least one image to finish creating this property. It will not be saved without one.

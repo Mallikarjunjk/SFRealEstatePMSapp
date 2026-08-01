@@ -7,7 +7,7 @@ export default class PropertyCreate extends LightningElement {
     @track propertyId;
     @track uploadedFiles = [];
 
-    // form field values
+    propertyName = '';
     address = '';
     city = '';
     state = '';
@@ -39,10 +39,10 @@ export default class PropertyCreate extends LightningElement {
         return ['.png', '.jpg', '.jpeg'];
     }
 
-    // Step A: only enable file upload after required text fields are filled
     get isFormValid() {
-        return this.address && this.city && this.state && this.postalCode &&
-               this.country && this.type && this.status && this.rent && this.description;
+        return this.propertyName && this.address && this.city && this.state &&
+               this.postalCode && this.country && this.type && this.status &&
+               this.rent && this.description;
     }
 
     handleInputChange(event) {
@@ -50,7 +50,6 @@ export default class PropertyCreate extends LightningElement {
         this[field] = event.target.value;
     }
 
-    // Step B: create the record first (without it, file upload has nothing to attach to)
     async handleCreateAndPrepareUpload() {
         if (!this.isFormValid) {
             this.showToast('Error', 'Please fill all required fields first.', 'error');
@@ -58,6 +57,7 @@ export default class PropertyCreate extends LightningElement {
         }
         try {
             this.propertyId = await createProperty({
+                nameStr: this.propertyName,
                 addressStr: this.address,
                 cityStr: this.city,
                 stateStr: this.state,
@@ -81,7 +81,6 @@ export default class PropertyCreate extends LightningElement {
         this.resetForm();
     }
 
-    // Step C: if user navigates away without uploading, clean up the orphaned record
     async handleCancelWithoutImage() {
         if (this.propertyId && this.uploadedFiles.length === 0) {
             await deleteProperty({ propertyId: this.propertyId });
@@ -92,6 +91,7 @@ export default class PropertyCreate extends LightningElement {
 
     resetForm() {
         this.propertyId = undefined;
+        this.propertyName = '';
         this.address = this.city = this.state = this.postalCode = this.country = '';
         this.type = this.furnishingStatus = this.status = this.description = '';
         this.rent = undefined;
