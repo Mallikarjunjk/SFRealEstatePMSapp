@@ -1,0 +1,27 @@
+<template>
+    <lightning-card title="Lease Agreement Document" icon-name="standard:contract">
+        <div class="slds-p-around_medium slds-grid slds-gutters">
+            <div class="slds-col">
+                <lightning-button
+                    variant="brand"
+                    label="Download PDF"
+                    icon-name="utility:download"
+                    onclick={handleDownload}
+                    disabled={isLoading}>
+                </lightning-button>
+            </div>
+            <div class="slds-col">
+                <lightning-button
+                    variant="neutral"
+                    label="Send PDF to Tenant"
+                    icon-name="utility:email"
+                    onclick={handleSendEmail}
+                    disabled={isLoading}>
+                </lightning-button>
+            </div>
+        </div>
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Processing" size="small"></lightning-spinner>
+        </template>
+    </lightning-card>
+</template>
