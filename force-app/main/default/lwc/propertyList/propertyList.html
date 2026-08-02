@@ -1,56 +1,119 @@
 <template>
     <lightning-card title="Properties" icon-name="standard:real_estate">
+
+        <span slot="actions">
+            <lightning-badge label={paginationLabel}></lightning-badge>
+        </span>
+
         <div class="slds-p-around_medium">
 
             <!-- Filters -->
-            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
-                <div class="slds-col slds-size_1-of-3">
+            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium slds-box slds-theme_shade slds-p-around_small">
+                <div class="slds-col slds-size_1-of-3 slds-small-size_1-of-1">
                     <lightning-input
                         type="number"
                         label="Max Price"
+                        placeholder="Any price"
                         onchange={handlePriceChange}>
                     </lightning-input>
                 </div>
-                <div class="slds-col slds-size_1-of-3">
+                <div class="slds-col slds-size_1-of-3 slds-small-size_1-of-1">
                     <lightning-combobox
                         label="Availability Status"
                         options={availabilityOptions}
+                        value={availabilityStatus}
                         onchange={handleAvailabilityChange}>
                     </lightning-combobox>
                 </div>
-                <div class="slds-col slds-size_1-of-3">
+                <div class="slds-col slds-size_1-of-3 slds-small-size_1-of-1">
                     <lightning-combobox
                         label="Furnishing Status"
                         options={furnishingOptions}
+                        value={furnishingStatus}
                         onchange={handleFurnishingChange}>
                     </lightning-combobox>
                 </div>
             </div>
 
-            <!-- Error -->
-            <template if:true={error}>
-                <p class="slds-text-color_error">Error loading properties.</p>
+            <!-- Loading -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading properties" size="small"></lightning-spinner>
             </template>
 
-            <!-- List -->
-            <template for:each={properties} for:item="prop">
-                <div key={prop.Id} class="slds-box slds-m-bottom_small">
-                    <p><strong>{prop.Name}</strong></p>
-                    <p>{prop.Address__c}, {prop.City__c}, {prop.State__c}</p>
-                    <p>Rent: {prop.Rent__c} | Status: {prop.Status__c} | Furnishing: {prop.Furnishing_Status__c}</p>
+            <!-- Error -->
+            <template if:true={error}>
+                <div class="slds-text-color_error slds-p-around_small">
+                    Something went wrong loading properties. Please try again.
                 </div>
             </template>
 
+            <!-- Empty state -->
+            <template if:false={hasResults}>
+                <template if:false={isLoading}>
+                    <div class="slds-illustration slds-illustration_small slds-p-around_medium slds-text-align_center slds-text-color_weak">
+                        No properties match your filters.
+                    </div>
+                </template>
+            </template>
+
+            <!-- Property Cards Grid -->
+            <div class="slds-grid slds-wrap slds-gutters">
+                <template for:each={properties} for:item="prop">
+                    <div key={prop.Id} class="slds-col slds-size_1-of-3 slds-medium-size_1-of-2 slds-small-size_1-of-1 slds-m-bottom_medium">
+                        <div
+                            data-id={prop.Id}
+                            onclick={handleRowClick}
+                            class="slds-box slds-box_x-small property-card"
+                            style="cursor:pointer; height:100%;">
+
+                            <template if:true={prop.thumbnailUrl}>
+                                <img
+                                    src={prop.thumbnailUrl}
+                                    alt={prop.Name}
+                                    style="width:100%; height:140px; object-fit:cover; border-radius:4px;" />
+                            </template>
+                            <template if:false={prop.thumbnailUrl}>
+                                <div style="width:100%; height:140px; background:#f3f3f3; border-radius:4px; display:flex; align-items:center; justify-content:center;">
+                                    <lightning-icon icon-name="standard:real_estate" size="medium"></lightning-icon>
+                                </div>
+                            </template>
+
+                            <div class="slds-p-top_small">
+                                <p class="slds-text-heading_small slds-truncate">{prop.Name}</p>
+                                <p class="slds-text-body_small slds-text-color_weak slds-truncate">
+                                    {prop.Address__c}, {prop.City__c}, {prop.State__c}
+                                </p>
+                                <div class="slds-grid slds-grid_align-spread slds-m-top_x-small">
+                                    <lightning-formatted-number
+                                        value={prop.Rent__c}
+                                        format-style="currency"
+                                        currency-code="USD"
+                                        class="slds-text-heading_small">
+                                    </lightning-formatted-number>
+                                    <lightning-badge label={prop.Status__c}></lightning-badge>
+                                </div>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                                    {prop.Furnishing_Status__c}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
             <!-- Pagination -->
-            <div class="slds-grid slds-grid_align-spread slds-m-top_medium">
+            <div class="slds-grid slds-grid_align-spread slds-m-top_medium slds-p-top_small slds-border_top">
                 <lightning-button
                     label="Previous"
+                    icon-name="utility:chevronleft"
                     onclick={handlePrev}
                     disabled={disablePrev}>
                 </lightning-button>
-                <span>Page {pageNumber} of {totalPages}</span>
+                <span class="slds-align-middle">{paginationLabel}</span>
                 <lightning-button
                     label="Next"
+                    icon-name="utility:chevronright"
+                    icon-position="right"
                     onclick={handleNext}
                     disabled={disableNext}>
                 </lightning-button>
