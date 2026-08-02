@@ -1,27 +1,29 @@
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, track,api} from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getProperties from '@salesforce/apex/PropertyController.getProperties';
+import getThumbnails from '@salesforce/apex/PropertyController.getThumbnails';
 
-export default class PropertyList extends LightningElement {
+export default class PropertyList extends NavigationMixin(LightningElement) {
     @track properties = [];
     @track error;
+    isLoading = false;
 
     pageNumber = 1;
     pageSize = 25;
     totalCount = 0;
 
-    // Filter values bound to inputs
     maxPrice;
-    availabilityStatus;
-    furnishingStatus;
+    availabilityStatus = '';
+    furnishingStatus = '';
 
     availabilityOptions = [
-        { label: 'All', value: '' },
+        { label: 'All Statuses', value: '' },
         { label: 'Available', value: 'Available' },
         { label: 'Occupied', value: 'Occupied' }
     ];
 
     furnishingOptions = [
-        { label: 'All', value: '' },
+        { label: 'All Furnishing Types', value: '' },
         { label: 'Furnished', value: 'Furnished' },
         { label: 'Semi-Furnished', value: 'Semi-Furnished' },
         { label: 'Unfurnished', value: 'Unfurnished' }
@@ -31,7 +33,14 @@ export default class PropertyList extends LightningElement {
         this.loadPage();
     }
 
+    @api
+    refresh() {
+        this.pageNumber = 1;
+        this.loadPage();
+    }
+
     loadPage() {
+        this.isLoading = true;
         getProperties({
             pageNumber: this.pageNumber,
             pageSize: this.pageSize,
@@ -40,13 +49,22 @@ export default class PropertyList extends LightningElement {
             furnishingStatus: this.furnishingStatus || null
         })
             .then((result) => {
-                this.properties = result.records;
                 this.totalCount = result.totalCount;
                 this.error = undefined;
+                const ids = result.records.map((p) => p.Id);
+                return getThumbnails({ propertyIds: ids }).then((thumbnails) => {
+                    this.properties = result.records.map((p) => ({
+                        ...p,
+                        thumbnailUrl: thumbnails[p.Id] || null
+                    }));
+                });
             })
             .catch((err) => {
                 this.error = err;
                 this.properties = [];
+            })
+            .finally(() => {
+                this.isLoading = false;
             });
     }
 
@@ -60,6 +78,14 @@ export default class PropertyList extends LightningElement {
 
     get disableNext() {
         return this.pageNumber >= this.totalPages;
+    }
+
+    get hasResults() {
+        return this.properties && this.properties.length > 0;
+    }
+
+    get paginationLabel() {
+        return `Page ${this.pageNumber} of ${this.totalPages} (${this.totalCount} total)`;
     }
 
     handlePrev() {
@@ -92,5 +118,17 @@ export default class PropertyList extends LightningElement {
         this.furnishingStatus = event.target.value;
         this.pageNumber = 1;
         this.loadPage();
+    }
+
+    handleRowClick(event) {
+        const propertyId = event.currentTarget.dataset.id;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: propertyId,
+                objectApiName: 'Property__c',
+                actionName: 'view'
+            }
+        });
     }
 }

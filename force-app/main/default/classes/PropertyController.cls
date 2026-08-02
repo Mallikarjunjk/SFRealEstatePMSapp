@@ -29,6 +29,51 @@ public with sharing class PropertyController {
         return result;
     }
 
+    @AuraEnabled(cacheable=true)
+    public static Map<Id, String> getThumbnails(List<Id> propertyIds) {
+        Map<Id, String> thumbnails = new Map<Id, String>();
+
+        if (propertyIds == null || propertyIds.isEmpty()) {
+            return thumbnails;
+        }
+
+        List<ContentDocumentLink> links = [
+            SELECT ContentDocumentId, LinkedEntityId
+            FROM ContentDocumentLink
+            WHERE LinkedEntityId IN :propertyIds
+        ];
+
+        Map<Id, Id> propertyToDoc = new Map<Id, Id>();
+        for (ContentDocumentLink l : links) {
+            if (!propertyToDoc.containsKey(l.LinkedEntityId)) {
+                propertyToDoc.put(l.LinkedEntityId, l.ContentDocumentId);
+            }
+        }
+
+        if (!propertyToDoc.isEmpty()) {
+            Map<Id, Id> docToVersion = new Map<Id, Id>();
+            for (ContentVersion cv : [
+                SELECT Id, ContentDocumentId
+                FROM ContentVersion
+                WHERE ContentDocumentId IN :propertyToDoc.values() AND IsLatest = true
+            ]) {
+                docToVersion.put(cv.ContentDocumentId, cv.Id);
+            }
+
+            for (Id propId : propertyToDoc.keySet()) {
+                Id docId = propertyToDoc.get(propId);
+                if (docToVersion.containsKey(docId)) {
+                    thumbnails.put(
+                        propId,
+                        '/sfc/servlet.shepherd/version/renditionDownload?rendition=THUMB120BY90&versionId=' + docToVersion.get(docId)
+                    );
+                }
+            }
+        }
+
+        return thumbnails;
+    }
+
     @AuraEnabled
     public static Id createProperty(
         String nameStr,
@@ -57,7 +102,6 @@ public with sharing class PropertyController {
             Description__c = descriptionStr
         );
 
-        // Geocode synchronously BEFORE insert so lat/long are saved immediately
         Map<String, Decimal> coords = GeocodingService.geocodeAddressSync(
             addressStr, cityStr, stateStr, countryStr
         );
