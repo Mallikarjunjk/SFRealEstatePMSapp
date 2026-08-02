@@ -1,4 +1,4 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track,api} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getProperties from '@salesforce/apex/PropertyController.getProperties';
 import getThumbnails from '@salesforce/apex/PropertyController.getThumbnails';
