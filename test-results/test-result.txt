@@ -1,0 +1,67 @@
+
+
+=== Test Results
+TEST NAME                                                                          OUTCOME  MESSAGE  RUNTIME (MS)
+─────────────────────────────────────────────────────────────────────────────────  ───────  ───────  ────────────
+MaintenanceRequestTriggerHandlerTest.setupData                                     Pass              67          
+MaintenanceRequestTriggerHandlerTest.testAutoAssign_doesNotOverrideExplicitVendor  Pass              86          
+MaintenanceRequestTriggerHandlerTest.testAutoAssign_noVendorsExist_doesNotError    Pass              212         
+MaintenanceRequestTriggerHandlerTest.testAutoAssign_respectsExistingWorkload       Pass              62          
+MaintenanceRequestTriggerHandlerTest.testAutoAssign_singleRequest                  Pass              33          
+MaintenanceRequestTriggerHandlerTest.testAutoAssign_spreadsAcrossVendors           Pass              46          
+PropertyTriggerTest.testTrigger_geocodesOnAddressUpdate                            Pass              192         
+PropertyTriggerTest.testTrigger_noGeocodeWhenAddressUnchanged                      Pass              51          
+GeocodingServiceTest.testGeocodeAddressSync_noResults                              Pass              36          
+GeocodingServiceTest.testGeocodeAddressSync_success                                Pass              8           
+GeocodingServiceTest.testGeocodeProperty_updatesRecord                             Pass              64          
+PropertyControllerTest.setupData                                                   Pass              92          
+PropertyControllerTest.testCreateProperty_withGeocodingMock                        Pass              34          
+PropertyControllerTest.testDeleteProperty                                          Pass              206         
+PropertyControllerTest.testGetProperties_firstPage                                 Pass              10          
+PropertyControllerTest.testGetProperties_secondPage                                Pass              9           
+PropertyControllerTest.testGetProperties_withAvailabilityFilter                    Pass              10          
+PropertyControllerTest.testGetProperties_withFurnishingFilter                      Pass              12          
+PropertyControllerTest.testGetProperties_withMaxPriceFilter                        Pass              21          
+PropertyControllerTest.testGetThumbnails_emptyList                                 Pass              4           
+PropertyControllerTest.testGetThumbnails_noFiles                                   Pass              14          
+PropertyControllerTest.testGetThumbnails_withFile                                  Pass              387         
+TestLinkCOACustomerToLMALicense.setup                                              Pass              278         
+TestLinkCOACustomerToLMALicense.testTriggerAfterInsert                             Pass              167         
+TestLinkCOACustomerToLMALicense.testTriggerAfterUpdate                             Pass              69          
+TestLinkCOACustomerToLMALicense.testTriggerNoMatchingLicense                       Pass              28          
+LeaseExpiryReminderJobTest.setupData                                               Pass              189         
+LeaseExpiryReminderJobTest.testExecute_noExpiringLeases_noEmails                   Pass              310         
+LeaseExpiryReminderJobTest.testExecute_sendsRemindersForExpiringLeases             Pass              208         
+LeaseExpiryReminderJobTest.testScheduling                                          Pass              231         
+LeaseAgreementControllerTest.setupData                                             Pass              263         
+LeaseAgreementControllerTest.testGetLeaseDetails                                   Pass              42          
+LeaseAgreementControllerTest.testSendLeasePdf_noTenantEmail_throws                 Pass              101         
+LeaseAgreementControllerTest.testSendLeasePdf_success                              Pass              154         
+
+
+=== Apex Code Coverage by Class
+CLASSES                           PERCENT  UNCOVERED LINES
+────────────────────────────────  ───────  ───────────────
+linkCOACustomerToLMALicense       100%                    
+PropertyController                100%                    
+GeocodingService                  100%                    
+PropertyTrigger                   100%                    
+LeaseAgreementController          100%                    
+LeaseExpiryReminderJob            100%                    
+MaintenanceRequestTriggerHandler  100%                    
+MaintenanceRequestTrigger         100%                    
+
+
+=== Test Summary
+NAME                 VALUE                          
+───────────────────  ───────────────────────────────
+Outcome              Passed                         
+Tests Ran            34                             
+Pass Rate            100%                           
+Fail Rate            0%                             
+Skip Rate            0%                             
+Test Run Id          707dN00000WJ13W                
+Test Execution Time  2807 ms                        
+Org Id               00DdN000011kGNGUA2             
+Username             mallikarjujkcustomapp@gmail.com
+Org Wide Coverage    100%                           
